@@ -1,4 +1,4 @@
-const apiKey = "da333995472736c5aed2c40cc038b012"; // API key from OpenWeatherMap
+const apiKey = process.env.API_KEY; // API key from OpenWeatherMap
 const searchBtn = document.getElementById("searchBtn");
 const locBtn = document.getElementById("locBtn");
 const cityInput = document.getElementById("cityInput");
@@ -164,18 +164,44 @@ async function fetchWeatherByCoords(lat, lon) {
 
 // Display weather data
 function displayWeather(data) {
-    weatherInfo.innerHTML = `
-    <div class="card-header"><h3>${data.name}, ${countries[data.sys.country]}</h3></div>
-    <div class="card-body">
-    <h1>${data.main.temp}°C</h1> 
-    <p>${data.weather[0].description}</p>
-    <p><strong>H:</strong> ${data.main.temp_max} °C | <strong>L:</strong> ${data.main.temp_min} °C</p>
-    <p><strong>Feels Like:</strong> ${data.main.feels_like} °C</p>
-    <p><strong>Humidity:</strong> ${data.main.humidity}%</p>
-    <p><strong>Wind Speed:</strong> ${data.wind.speed} m/s</p>
-    </div>
+    const iconCode = data.weather[0].icon;
+    const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+    const weatherDesc = data.weather[0].description.toLowerCase();
+
+    // Determine background based on weather
+    let bg;
+    if (weatherDesc.includes("cloud")) {
+        bg = "linear-gradient(to bottom, #bdc3c7, #2c3e50)"; // cloudy gray
+    } else if (weatherDesc.includes("rain") || weatherDesc.includes("drizzle")) {
+        bg = "linear-gradient(to bottom, #4e54c8, #8f94fb)"; // rainy blue
+    } else if (weatherDesc.includes("clear")) {
+        bg = "linear-gradient(to bottom, #fbc2eb, #a6c1ee)"; // sunny/light
+    } else if (weatherDesc.includes("snow")) {
+        bg = "linear-gradient(to bottom, #83a4d4, #b6fbff)"; // snowy white
+    } else if (weatherDesc.includes("storm") || weatherDesc.includes("thunder")) {
+        bg = "linear-gradient(to bottom, #232526, #414345)"; // storm dark
+    } else {
+        bg = "linear-gradient(to bottom, #74ebd5, #acb6e5)"; // default
+    }
+
+    // Update card background
+    const card = document.getElementById("weatherInfo");
+    card.style.background = bg;
+
+    // Update weather info
+    card.innerHTML = `
+    <h2>${data.name}, ${data.sys.country}</h2>
+    <img src="${iconUrl}" alt="${data.weather[0].description}" />
+    <p><strong>Current temperature:</strong> ${data.main.temp.toFixed(2)}°C</p>
+    <p><strong>Feels like:</strong> ${data.main.feels_like.toFixed(2)}°C</p>
+    <p><strong>Max:</strong> ${data.main.temp_max.toFixed(2)}°C, <strong>Min:</strong> ${data.main.temp_min.toFixed(2)}°C</p>
+    <p><strong>${capitalizeFirstLetter(weatherDesc)}</strong></p>
   `;
-    document.getElementById("weatherInfo").style.display = "block";
+}
+
+// Helper function
+function capitalizeFirstLetter(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 // Event listeners
