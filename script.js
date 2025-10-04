@@ -175,7 +175,7 @@ function displayWeather(data) {
     } else if (weatherDesc.includes("rain") || weatherDesc.includes("drizzle")) {
         bg = "linear-gradient(to bottom, #4e54c8, #8f94fb)"; // rainy blue
     } else if (weatherDesc.includes("clear")) {
-        bg = "linear-gradient(to bottom, #fbc2eb, #a6c1ee)"; // sunny/light
+        bg = "linear-gradient(to bottom, #87CEFA, #FFB347)";// sunny/light
     } else if (weatherDesc.includes("snow")) {
         bg = "linear-gradient(to bottom, #83a4d4, #b6fbff)"; // snowy white
     } else if (weatherDesc.includes("storm") || weatherDesc.includes("thunder")) {
@@ -197,6 +197,7 @@ function displayWeather(data) {
     <p><strong>Max:</strong> ${data.main.temp_max.toFixed(2)}°C, <strong>Min:</strong> ${data.main.temp_min.toFixed(2)}°C</p>
     <p><strong>${capitalizeFirstLetter(weatherDesc)}</strong></p>
   `;
+    document.getElementById("weatherInfo").style.display = "block";
 }
 
 // Helper function
